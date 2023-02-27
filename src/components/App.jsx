@@ -1,25 +1,74 @@
 import { Component } from 'react';
 import css from './App.module.css';
 import Searchbar from './Searchbar/Searchbar';
+import ImageGallery from './ImageGallery/ImageGallery';
+import Button from './Button/Button';
 import Loader from './Loader/Loader';
+import Modal from './Modal/Modal';
+import fetch from '../services/api';
 
-export class App extends Component {
+export default class App extends Component {
   state = {
+    nameImg: '',
     images: [],
     page: 1,
-	//  key=32401247-d831a8438a21bb86fb66fd7b1
+    isLoader: false,
+    isModal: false,
+	 bigImg: '',
   };
 
-  isFindImg = (nameImg) => {
-    console.log(2);
+  isSearchNameImg = nameImg => {
+    if (nameImg !== this.state.nameImg) {
+      this.setState({ nameImg, images: [], page: 1 });
+    }
+  };
+
+  componentDidUpdate(prevProps, prevState) {
+    const { nameImg, images, page } = this.state;
+    if (prevState.nameImg !== nameImg || prevState.page !== page) {
+      this.isFetchImg();
+    }
+  }
+
+  isFetchImg = () => {
+    const { nameImg, images, page, isLoader } = this.state;
+    this.setState({ isLoader: true });
+    fetch(nameImg, page)
+      .then(({ data }) => {
+        if (data.total === 0) {
+          return alert('There are no images for this request, try again');
+        }
+        this.setState(prevState => {
+          return { images: [...prevState.images, ...data.hits] };
+        });
+      })
+      .catch(error => console.log(error.message))
+      .finally(() => this.setState({ isLoader: false }));
+  };
+
+  isChangePage = () => {
+    this.setState(prevState => {
+      return { page: (prevState.page += 1) };
+    });
+  };
+  isOpenModal = img => {
+	console.log(img);
+	this.setState({isModal: true})
+	this.setState({bigImg: img})
+	return img;
   };
 
   render() {
+    const { nameImg, images, page, isLoader, isModal, bigImg } = this.state;
     return (
       <div className={css.App}>
-        <Searchbar onSubmit={this.isFindImg} />
-
-        <Loader />
+        <Searchbar onSubmit={this.isSearchNameImg} />
+        <div>
+          <ImageGallery gallery={images} bigImg={this.isOpenModal}/>
+          {images.length >= 12 && <Button onClick={this.isChangePage} />}
+          {isLoader && <Loader />}
+        </div>
+        {isModal && <Modal bigImg={bigImg}/>}
       </div>
     );
   }
