@@ -10,12 +10,13 @@ export default class Searchbar extends Component {
   onSubmit = e => {
     e.preventDefault();
     if (this.state.nameImg.trim() === '') {
-	  return	alert('Please enter a search word')
-	 } this.props.onSubmit(this.state.nameImg);
+      return alert('Please enter a search word');
+    }
+    this.props.onSubmit(this.state.nameImg);
   };
   changeNameImg = e => {
     this.setState({ nameImg: e.currentTarget.value.toLowerCase().trim() });
-	 };
+  };
   render() {
     return (
       <header className={css.searchbar}>
@@ -40,5 +41,5 @@ export default class Searchbar extends Component {
 }
 
 Searchbar.propTypes = {
-	onSubmit: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
 };

@@ -1,34 +1,33 @@
+import { Component } from 'react';
 import PropTypes from 'prop-types';
-import * as basicLightbox from 'basiclightbox'
 import css from './Modal.module.css';
 
+export default class Modal extends Component {
+  componentDidMount() {
+    document.addEventListener('keydown', this.closeModal);
+  }
 
-export default function Modal({bigImg}) {
-// const v = open();
-console.log(bigImg);
-  return (
-    <div className={css.overlay}>
-      <div className={css.modal}>
-        <img src={bigImg} alt="Big Pictures" />
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.closeModal);
+  }
+
+  closeModal = ({ target, currentTarget, code }) => {
+    if (target === currentTarget || code === 'Escape') {
+      this.props.close();
+    }
+  };
+
+  render() {
+    return (
+      <div className={css.overlay} onClick={this.closeModal}>
+        <div className={css.modal}>
+          <img src={this.props.bigImg} alt="Big Pictures" />
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 }
-// const instance = basicLightbox.create(
-// 	` <div class="modal"> <img src="${e.target.dataset.source}" alt="Big Pictures"/> </div> `,
-//  {
-//   onShow: (instance) => {
-// 	 window.addEventListener("keydown", onEscape);
-//   },
-//   onClose: (instance) => {
-// 	 window.removeEventListener("keydown", onEscape);
-// 	 },
-//  }
-// );
-//  instance.show();
-//  function onEscape(e) {
-//  if (e.key === "Escape") {
-//  instance.close();
-//  }
-//  }	
-// };
+Modal.propTypes = {
+  bigImg: PropTypes.string.isRequired,
+  close: PropTypes.func.isRequired,
+};

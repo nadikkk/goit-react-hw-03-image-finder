@@ -14,7 +14,7 @@ export default class App extends Component {
     page: 1,
     isLoader: false,
     isModal: false,
-	 bigImg: '',
+    bigImg: '',
   };
 
   isSearchNameImg = nameImg => {
@@ -24,14 +24,14 @@ export default class App extends Component {
   };
 
   componentDidUpdate(prevProps, prevState) {
-    const { nameImg, images, page } = this.state;
+    const { nameImg, page } = this.state;
     if (prevState.nameImg !== nameImg || prevState.page !== page) {
       this.isFetchImg();
     }
   }
 
   isFetchImg = () => {
-    const { nameImg, images, page, isLoader } = this.state;
+    const { nameImg, page } = this.state;
     this.setState({ isLoader: true });
     fetch(nameImg, page)
       .then(({ data }) => {
@@ -52,23 +52,25 @@ export default class App extends Component {
     });
   };
   isOpenModal = img => {
-	console.log(img);
-	this.setState({isModal: true})
-	this.setState({bigImg: img})
-	return img;
+    this.setState({ isModal: true });
+    this.setState({ bigImg: img });
+    return img;
+  };
+  isCloseModal = () => {
+    this.setState({ isModal: false });
   };
 
   render() {
-    const { nameImg, images, page, isLoader, isModal, bigImg } = this.state;
+    const { images, isLoader, isModal, bigImg } = this.state;
     return (
       <div className={css.App}>
         <Searchbar onSubmit={this.isSearchNameImg} />
         <div>
-          <ImageGallery gallery={images} bigImg={this.isOpenModal}/>
+          <ImageGallery gallery={images} bigImg={this.isOpenModal} />
           {images.length >= 12 && <Button onClick={this.isChangePage} />}
           {isLoader && <Loader />}
         </div>
-        {isModal && <Modal bigImg={bigImg}/>}
+        {isModal && <Modal bigImg={bigImg} close={this.isCloseModal} />}
       </div>
     );
   }
