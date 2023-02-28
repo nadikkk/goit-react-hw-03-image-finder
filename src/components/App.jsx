@@ -25,6 +25,8 @@ export default class App extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const { nameImg, page } = this.state;
+	 console.log(prevState.page);
+	 console.log(this.state.page);
     if (prevState.nameImg !== nameImg || prevState.page !== page) {
       this.isFetchImg();
     }
@@ -48,7 +50,7 @@ export default class App extends Component {
 
   isChangePage = () => {
     this.setState(prevState => {
-      return { page: (prevState.page += 1) };
+      return { page: (prevState.page + 1) };
     });
   };
   isOpenModal = img => {
